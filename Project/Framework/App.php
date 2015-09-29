@@ -38,11 +38,14 @@ class App{
     public function getConfig(){
         return $this->_config;
     }
+
     public function run(){
         if($this->_config->getConfigFolder() == null){
             $this->setConfigFolder('../config');
         }
         $this->_frontController = \FW\FrontController::getInstance();
+
+
         $this->_frontController->dispatch();
     }
 

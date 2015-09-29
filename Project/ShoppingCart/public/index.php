@@ -4,6 +4,6 @@ include '../../Framework/App.php';
 
 
 $app = \FW\App::getInstance();
-echo $app->getConfig()->app;
+//echo $app->getConfig()->app;
 
 $app->run();
