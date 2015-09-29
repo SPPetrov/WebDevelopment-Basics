@@ -53,6 +53,7 @@ final class Loader
                 throw new \Exception('Invalid path');
             }
             $_path = realpath($path);
+
             if($_path && is_dir($_path) && is_readable($_path) ){
                 self::$namespaces[$namespace.'\\'] = $_path . DIRECTORY_SEPARATOR;
             }else{
@@ -65,10 +66,8 @@ final class Loader
 
     public static function registerNamespaces($namespaces){
         if(is_array($namespaces)){
-            var_dump($namespaces);
             foreach ($namespaces as $namespace => $path  ) {
-                var_dump($namespace);
-                var_dump($path);
+
                 self::registerNamespace($namespace, $path);
             }
 
