@@ -6,6 +6,7 @@ include_once 'Loader.php';
 class App{
     private static $_instance = null;
     private $_config = null;
+    private $router = null;
     /**
      * @var \FW\FrontController
      */
@@ -32,6 +33,17 @@ class App{
         return $this->_configFolder;
     }
 
+
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
+    public function setRouter($router)
+    {
+        $this->router = $router;
+    }
+
     /**
      * @return \FW\Config
      */
@@ -44,8 +56,7 @@ class App{
             $this->setConfigFolder('../config');
         }
         $this->_frontController = \FW\FrontController::getInstance();
-
-
+        $this->_frontController->setRouter(new \FW\Routers\DefaultRouter());
         $this->_frontController->dispatch();
     }
 

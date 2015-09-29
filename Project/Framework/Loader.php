@@ -59,6 +59,7 @@ final class Loader
             }else{
                 throw new \Exception('Namespace directory read error:' . $path);
             }
+
         }else{
             throw new \Exception('Invalid namespace');
         }

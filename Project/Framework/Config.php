@@ -32,10 +32,11 @@ class Config
             $this->_configArray = array();
             $this->_configFolder = $realFolder . DIRECTORY_SEPARATOR;
 
-            $ns=$this->app['namespace'];
+            $ns=$this->app['namespaces'];
             if(is_array($ns)){
-                \FW\Loader::registerNamespace($ns);
+                \FW\Loader::registerNamespaces($ns);
             }
+
         }else{
             throw new \Exception('Config directory read error:' . $configFolder);
         }

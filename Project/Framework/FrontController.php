@@ -11,23 +11,38 @@ namespace FW;
 
 class FrontController
 {
-    const DEFAULT_CONTROLLER = 'Index';
-    const DEFAULT_METHOD = 'index';
 
     private static $_instance = null;
     private $ns = null;
     private $controller = null;
     private $method = null;
+    private $router=null;
 
     public function __construct(){
 
     }
 
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
+    public function setRouter(\FW\Routers\IRouter $router)
+    {
+        $this->router = $router;
+    }
+
+
+
+
     public function dispatch(){
-        $a = new \FW\Routers\DefaultRouter();
-        $_uri = $a->getURI();
+        if($this->router == null){
+            throw new \Exception('No valid router found', 500);
+        }
+        $_uri = $this->router->getURI();
         $routes = \FW\App::getInstance()->getConfig()->routes;
-        $_rc=null;
+        $_rc = null;
+
         if(is_array($routes) && count($routes) > 0){
             foreach ($routes as $k => $v ) {
                 if(stripos($_uri, $k)===0 &&
@@ -52,10 +67,10 @@ class FrontController
 
         $_params = explode('/', $_uri);
         if($_params[0]){
-            $this->controller=$_params[0];
+            $this->controller=strtolower($_params[0]);
 
             if($_params[1]){
-                $this->method=$_params[1];
+                $this->method=strtolower($_params[1]);
             }else{
                 $this->method=$this->getDefaultMethod();
             }
@@ -64,26 +79,35 @@ class FrontController
             $this->method=$this->getDefaultMethod();
         }
 
-        if(is_array($_rc) && $_rc['controllers'] && $_rc['controllers'][$this->controller]){
-            $this->controller = $_rc['controllers'][$this->controller];
+        if(is_array($_rc) && $_rc['controllers']){
+            if($_rc['controllers'][$this->controller]['methods'][$this->method]){
+                $this->method = strtolower($_rc['controllers'][$this->controller]['methods'][$this->method]);
+            }
+            if(isset($_rc['controllers'][$this->controller]['to'])){
+                $this->controller = strtolower($_rc['controllers'][$this->controller]['to']);
+            }
         }
-        echo $this->controller;
+
+        $f = $this->ns . '\\' . ucfirst($this->controller);
+        $newController = new $f();
+        $newController->{$this->method}();
+
     }
 
     public function getDefaultController(){
         $controller = \FW\App::getInstance()->getConfig()->app['dafault_controller'];
         if($controller){
-            return $controller;
+            return strtolower($controller);
         }
-        return self::DEFAULT_CONTROLLER;
+        return 'index';
     }
 
     public function getDefaultMethod(){
         $method = \FW\App::getInstance()->getConfig()->app['dafault_method'];
         if($method){
-            return $method;
+            return strtolower($method);
         }
-        return self::DEFAULT_METHOD;
+        return 'index';
     }
     /**
      * @return \FW\Frontcontroller

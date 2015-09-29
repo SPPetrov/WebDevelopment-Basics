@@ -1,6 +1,6 @@
 <?php
 
-$cnf['dafault_controller'] = 'Index2';
-$cnf['dafault_method'] = 'index3';
-$cnf['namespaces']['Controllers'] = '../Controllers/';
+$cnf['dafault_controller'] = 'index';
+$cnf['dafault_method'] = 'index2';
+$cnf['namespaces']['Controllers'] = '../controllers/';
 return $cnf;
