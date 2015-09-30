@@ -11,5 +11,7 @@ namespace Controllers;
 
 class Index
 {
-
+    public function Index2(){
+        echo "ej Hello";
+    }
 }

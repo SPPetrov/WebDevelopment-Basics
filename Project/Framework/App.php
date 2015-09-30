@@ -7,6 +7,9 @@ class App{
     private static $_instance = null;
     private $_config = null;
     private $router = null;
+    private $_dbConnections=array();
+    private $_session = null;
+
     /**
      * @var \FW\FrontController
      */
@@ -57,7 +60,50 @@ class App{
         }
         $this->_frontController = \FW\FrontController::getInstance();
         $this->_frontController->setRouter(new \FW\Routers\DefaultRouter());
+
+        $_sess = $this->_config->app['session'];
+
+        if($_sess['autostart']){
+            if($_sess['type']=='native'){
+                $_s = new \FW\Sessions\NativeSession($_sess['name'],
+                    $_sess['lifetime'], $_sess['path'], $_sess['domain'], $_sess['secure']);
+            }
+            $this->setSession($_s);
+        }
         $this->_frontController->dispatch();
+    }
+
+    public function setSession(\FW\Sessions\ISession $session){
+        $this->_session = $session;
+    }
+
+    /**
+     * @return \FW\Sessions\ISession
+     */
+    public function getSession()
+    {
+        return $this->_session;
+    }
+
+
+
+    public function getDBConnection($connection='default'){
+        if(!$connection){
+            throw new \Exception('No connection identifier providet', 500);
+        }
+        if($this->_dbConnections[$connection]){
+            return $this->_dbConnections[$connection];
+        }
+        $_cnf = $this->getConfig()->database;
+
+        if(!$_cnf[$connection]){
+            throw new \Exception ('No valid connection identificator is proded', 500);
+        }
+
+        $dbh=new \PDO($_cnf[$connection]['connection_uri'], $_cnf[$connection]['username'],
+            $_cnf[$connection]['password'], $_cnf[$connection]['pdo_options']);
+        $this->_dbConnections[$connection]=$dbh;
+        return $dbh;
     }
 
     /**
