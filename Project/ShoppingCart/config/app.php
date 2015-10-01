@@ -1,7 +1,8 @@
 <?php
 
 $cnf['dafault_controller'] = 'Index';
-$cnf['dafault_method'] = 'index2';
+$cnf['dafault_method'] = 'index';
+
 $cnf['namespaces']['Controllers'] = '../Controllers/';
 
 $cnf['session']['autostart'] = true;

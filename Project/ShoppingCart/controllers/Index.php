@@ -9,9 +9,16 @@
 namespace Controllers;
 
 
-class Index
+use FW\DefaultController;
+
+class Index extends  DefaultController
 {
-    public function Index2(){
-        echo "ej Hello";
+    public function index2(){
+
+        $view = \FW\View::getInstance();
+        $view->username = 'Baj Ivan';
+        $view->appendToLayout('body','admin.index');
+        $view->display('layouts.default', array('c'=>array(1,2,3,5,8)));
+
     }
 }

@@ -9,9 +9,13 @@
 namespace Controllers\Admin;
 
 
-class Index
+use FW\DefaultController;
+
+class Index extends DefaultController
 {
-    public function index2(){
-        echo 'super si';
+    public function Index(){
+        echo "hello index admin";
     }
+
 }
+

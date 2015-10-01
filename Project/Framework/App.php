@@ -17,6 +17,7 @@ class App{
 
     private function __construct()
     {
+        set_exception_handler(array($this, '_exceptionHandler'));
         \FW\Loader::registerNamespace('FW', dirname(__FILE__).DIRECTORY_SEPARATOR);
         \FW\Loader::registerAutoLoad();
         $this->_config = \FW\Config::getInstance();
@@ -67,6 +68,8 @@ class App{
             if($_sess['type']=='native'){
                 $_s = new \FW\Sessions\NativeSession($_sess['name'],
                     $_sess['lifetime'], $_sess['path'], $_sess['domain'], $_sess['secure']);
+            }else{
+                throw new \Exception('No valid session', 500);
             }
             $this->setSession($_s);
         }
@@ -118,5 +121,29 @@ class App{
         return self::$_instance;
     }
 
+    public function _exceptionHandler(\Exception $ex) {
+        if ($this->_config && $this->_config->app['displayExceptions'] == true) {
+            echo '<pre>' . print_r($ex, true) . '</pre>';
+        } else {
+            $this->displayError($ex->getCode());
+        }
+    }
 
+    public function displayError($error) {
+        try {
+            $view = \FW\View::getInstance();
+            $view->display('errors.' . $error);
+        } catch (\Exception $exc) {
+            \FW\Common::headerStatus($error);
+            echo '<h1>' . $error . '</h1>';
+            exit;
+        }
+    }
+
+    public function __destruct()
+    {
+        if ($this->_session != null) {
+            $this->_session->saveSession();
+        }
+    }
 }
